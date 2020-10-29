@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+#include<time.h>
 #include"utility.h"
 
 /*--------------------------------A4-----------------------------------------*/
@@ -314,7 +315,6 @@ double laguerre(double * arr,int n,double x0,int * iter){
 	for(int j=1;j<MAXIT;j++){
 		double a,d1,d2;
 		a_k=a_k1;
-		if(fabs(poly(arr,n,a_k))<epsilon){*iter=j-1;return a_k;}
 
 		G=D1_poly(arr,n,a_k)/poly(arr,n,a_k);
 		H=pow(G,2)-(D2_poly(arr,n,a_k)/poly(arr,n,a_k));
@@ -367,3 +367,73 @@ double D2_poly(double * arr,int n,double x0){
 }
 
 //-----------------------------------------------------------------------------------
+//-------------------------A6--------------------------------------------------------
+/*NUmerical integration midpoint*/
+
+double NI_midpoint(double(*func)(double),double a,double b,int N){
+	double sum,h;
+	h=(b-a)/N;
+	sum=0.0;
+	double x=a;
+	for(int j=1;j<=N;j++){
+		sum+=((*func)(x+(j-1)*h)+(*func)(x+j*h))/2;
+	}
+	return h*sum;
+}
+/*---------------------------------------------------------------------------------*/
+/*numerical integration	trapezoid*/
+double NI_trapezoid(double(*func)(double),double a,double b,int N){
+	double sum,h;
+	h=(b-a)/N;
+	sum=0.0;
+	for(int j=0;j<=N;j++){
+		if(j==0 || j==N)
+			sum+=(*func)(a+j*h);
+		else
+			sum+=2*(*func)(a+j*h);
+	}
+	return (h*sum)/2.0;
+}
+/*-------------------------------------------------------------------------------*/
+/*numerical integration simpson*/
+double NI_simpson(double(*func)(double),double a,double b,int N){
+	if(N%2!=0)N=N+1;
+	double sum,h;
+	h=(b-a)/(N);/*dividing into even no of interval*/
+	sum=0.0;
+	for(int j=0;j<=N;j++){
+		if(j==0 || j==N)
+			sum+=(*func)(a+j*(h));
+		else if(j%2==0)
+			sum+=2.0*(*func)(a+j*(h));
+		else
+			sum+=4.0*(*func)(a+j*(h));
+	}
+	return (h*sum)/3.0;
+}
+/*------------------------------------------------------------------------------*/
+
+/*-------------------------------------------------------------------------------*/
+/*Numerical integration monte-carlo method */
+double monte_carlo_1D(double(*func)(double),double a,double b,double N,double* s){
+						/*return sigma in s*/
+	double F_N=0;
+	double sum1=0;
+	double sum2=0;
+	double x;
+	
+	time_t t;
+
+	srand((unsigned) time(&t));
+
+	for(int i=1;i<=N;i++){
+		x=a+(b-a)*((1.0*rand())/RAND_MAX);
+		sum1+=(*func)(x);
+		sum2+=pow((*func)(x),2);
+	}
+	F_N=((b-a)/N)*sum1;
+	*s=sqrt((sum2/N)-pow(sum1/N,2));
+	return F_N;
+}
+/**/
+
