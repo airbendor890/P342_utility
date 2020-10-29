@@ -1,5 +1,6 @@
 #include<stdio.h>
-
+#include<stdlib.h>
+#include<time.h>
 
 /*A4*/
 void mat_mul(int n,double arr1[n][n],double arr2[n][n]);
@@ -24,3 +25,10 @@ double D1_poly(double* arr,int n,double x0);
 double D2_poly(double * arr,int n,double x0);
 
 /*A6*/
+double f1(double);
+double f2(double);
+double f3(double);
+double NI_midpoint(double(*func)(double),double,double,int);
+double NI_trapezoid(double(*func)(double),double,double,int);
+double NI_simpson(double(*func)(double),double ,double ,int);
+double monte_carlo_1D(double(*func)(double),double,double,double,double*);
