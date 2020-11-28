@@ -435,5 +435,55 @@ double monte_carlo_1D(double(*func)(double),double a,double b,double N,double* s
 	*s=sqrt((sum2/N)-pow(sum1/N,2));
 	return F_N;
 }
-/**/
+/*----------------------------------------------------------------------------*/
+/*Assignment 7:numerical methods solving of differentila eqn*/
+/*Eulers explicit method:*/
 
+void Euler_explicit(double(*func)(double,double),double x_0,double y_0,double x_n,double h,FILE * fptr)
+/*x_0,y_0 is initial value,x_n-x_0 is the interval of plot, h is step size,fptr is pointer to output file */
+{	double x=x_0;
+	double y=y_0;
+	fprintf(fptr,"%lf	%lf\n",x,y);
+
+	while(x<=x_n){
+		y=y+h*(*func)(y,x);
+		x=x+h;
+		fprintf(fptr,"%lf	%lf\n",x,y);
+	}
+
+}
+/*--------------------------------------------------------------------------*/
+/*Runge kutta method RK4*/
+void RK4(double(*func)(double,double,double),double x_0,double y_0,double y1_0,double x_n,double h,FILE * fptr)
+/*this RK4 routine is for solving 2nd order ode with initial values (or twocoupled 1st order ode)*/
+/*x_0,y_0,y1_0 are initial value,x_n-x_0 is the interval of plot, h is step size,fptr is pointer to output file */
+/* func:=f(dy/dx,y,x)*/
+{
+	double x=x_0;
+	double y=y_0;/*y(x_0)=y_0*/
+	double y1=y1_0;/*y'(x_0)=y1_0*/
+	fprintf(fptr,"%lf\t%lf\t%lf\n",x,y,y1);
+	double k1_y,k2_y,k3_y,k4_y;
+	double k1_y1,k2_y1,k3_y1,k4_y1;
+	while(x<=x_n){
+		k1_y=h*y1;
+		k1_y1=h*(*func)(y1,y,x);
+
+		k2_y=h*(y1+k1_y1/2);
+		k2_y1=h*(*func)(y1+k1_y1/2,y+k1_y/2,x+h/2);
+
+		k3_y=h*(y1+k2_y1/2);
+		k3_y1=h*(*func)(y1+k2_y1/2,y+k2_y/2,x+h/2);
+
+		k4_y=h*(y1+k3_y1);
+		k4_y1=h*(*func)(y1+k3_y1,y+k3_y,x);
+
+		y=y+(k1_y+2*k2_y+2*k3_y+k4_y)/6;
+		y1=y1+(k1_y1+2*k2_y1+2*k3_y1+k4_y1)/6;
+		x=x+h;
+
+	fprintf(fptr,"%lf\t%lf\t%lf\n",x,y,y1);
+
+	}
+
+}
